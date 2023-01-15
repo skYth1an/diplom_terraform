@@ -15,6 +15,3 @@ variable zone2 {
   default = "ru-central1-b"
 }
 
-variable zones {
-  default = ["ru-central1-a","ru-central1-b"]
-}

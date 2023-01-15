@@ -27,12 +27,36 @@ resource "yandex_iam_service_account_static_access_key" "sa-static-key" {
 }
 
 resource "yandex_compute_instance" "kuber" {
-  count = 3
-  name           = "kuber-${count.index + 1}"
+  count = 2
+  name           = "kuber-zone1-${count.index + 1}"
 
   resources {
     cores  = 2
     memory = 2
+    core_fraction = 20
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd827b91d99psvq5fjit"
+    }
+  }
+
+  network_interface {
+    subnet_id = "${yandex_vpc_subnet.public.id}"
+    nat       = true
+  }
+
+}
+
+resource "yandex_compute_instance" "kuber2" {
+  count = 1
+  name           = "kuber-zone2-${count.index + 1}"
+
+  resources {
+    cores  = 2
+    memory = 2
+    core_fraction = 20
   }
 
   boot_disk {
@@ -48,9 +72,9 @@ resource "yandex_compute_instance" "kuber" {
 
 }
 
-
 resource "yandex_vpc_network" "network" {
   name = "network"
+  folder_id      = "${var.folder_id}"
 }
 
 resource "yandex_vpc_subnet" "public" {
