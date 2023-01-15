@@ -27,8 +27,8 @@ resource "yandex_iam_service_account_static_access_key" "sa-static-key" {
 }
 
 resource "yandex_compute_instance" "kuber" {
-  count = 2
-  name           = "kuber${count.index + 1}"
+  count = 3
+  name           = "kuber-${count.index + 1}"
 
   resources {
     cores  = 2
@@ -42,9 +42,10 @@ resource "yandex_compute_instance" "kuber" {
   }
 
   network_interface {
-    subnet_id = "${yandex_vpc_subnet.public.id}"
+    subnet_id = "${yandex_vpc_subnet.public2.id}"
     nat       = true
   }
+
 }
 
 
