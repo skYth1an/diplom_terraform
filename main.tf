@@ -79,6 +79,7 @@ resource "yandex_compute_instance_group" "group1" {
 
 resource "yandex_vpc_network" "network" {
   name = "network"
+  folder_id      = "${var.folder_id}"
 }
 
 resource "yandex_vpc_subnet" "public" {
