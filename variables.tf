@@ -6,7 +6,8 @@ variable folder_id {
   type = string
   default = "b1gjmrhngcisglrqmhda"
 }
-variable zone {
-  type = string
-  default = "ru-central1-a"
+
+variable zones {
+  default = ["ru-central1-a","ru-central1-b"]
 }
+
