@@ -46,11 +46,7 @@ resource "yandex_compute_instance_group" "group1" {
       subnet_ids = ["${yandex_vpc_subnet.public.id}"]
       nat = true
     }
-    labels = {
-      label1 = "label1-value"
-      label2 = "label2-value"
-      label3 = "label3-value"
-    }
+
     metadata = {
       user-data = "${file("data.txt")}"
       #ssh-keys = "ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}"
