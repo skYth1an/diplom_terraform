@@ -1,0 +1,16 @@
+#cloud-config
+users:
+  - name: ubuntu
+    groups: sudo
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCx1RYJV99iPpYmYOcQ5PLJ+kSKC9CKW1wOlm//UqFilMs0YuxKNscXcsimko1SqK0sc7tsn5bR/E6U+USuQF2+OZ8MwssElT8afL/O8MbCg37xfGMygETwkOLeGPF9O05RiUfhcIuZW74OSVHzvR568KLVoNtARKEW1goohjqqKfBwwWA1vgwjODgKUdKjzxyNkf3NUfpBNchu2+Y7XBlKGUvnqCah5aDNHPgPFI5mCVAsw9ECyyv/3NKlAZh0kI0DDHkJ2Bgimf/GiTWXVbNALz3u1zH9Irpg/+334UtNBS77dRxVRo+Ua9jWCbEHQWpc8IHEQyucqR66xkSDF+O5 vagrant@vagrant
+
+
+write_files:
+  - encoding: b64
+    content: PCFET0NUWVBFIGh0bWw+DQo8aHRtbCBsYW5nPSJydSI+DQo8aGVhZD4NCjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4NCjx0aXRsZT7QodGC0YDQsNC90LjRhtCwINGBINC40LfQvtCx0YDQsNC20LXQvdC40LXQvDwvdGl0bGU+DQo8L2hlYWQ+DQo8Ym9keT4NCjxpbWcgc3JjPSJodHRwOi8vbGViZWRldjI1LjEyLjIyLndlYnNpdGUueWFuZGV4Y2xvdWQubmV0LzEuanBnIj4NCjwvYm9keT4NCjwvaHRtbD4NCg0KDQoNCg==
+    owner: ubuntu:ubuntu
+    path: /var/www/html/index.html
+    permissions: '0777'
