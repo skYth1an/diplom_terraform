@@ -35,6 +35,7 @@ resource "yandex_iam_service_account_static_access_key" "sa-static-key" {
 resource "yandex_compute_instance" "kuber" {
   count = 2
   name           = "kuber-zone1-${count.index + 1}"
+  zone = "ru-central1-a"
 
   resources {
     cores  = 2
@@ -44,7 +45,7 @@ resource "yandex_compute_instance" "kuber" {
 
   boot_disk {
     initialize_params {
-      image_id = "fd827b91d99psvq5fjit"
+      image_id = "fd8hpqvd8id5l4gb74t2"
     }
   }
 
@@ -63,6 +64,7 @@ resource "yandex_compute_instance" "kuber" {
 resource "yandex_compute_instance" "kuber2" {
   count = 1
   name           = "kuber-zone2-${count.index + 1}"
+  zone = "ru-central1-b"
 
   resources {
     cores  = 2
@@ -72,7 +74,7 @@ resource "yandex_compute_instance" "kuber2" {
 
   boot_disk {
     initialize_params {
-      image_id = "fd827b91d99psvq5fjit"
+      image_id = "fd8hpqvd8id5l4gb74t2"
     }
   }
 
