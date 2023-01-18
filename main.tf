@@ -7,6 +7,12 @@ terraform {
   required_version = ">= 0.13"
 }
 
+#Provider settngs
+provider "yandex" {
+  cloud_id  = "${var.cloud_id}"
+  folder_id = "${var.folder_id}"
+  zone = "ru-central1-a"
+}
 
 resource "yandex_iam_service_account" "sa" {
   name = "k8s"
@@ -43,9 +49,13 @@ resource "yandex_compute_instance" "kuber" {
   }
 
   network_interface {
-    subnet_id = "${yandex_vpc_subnet.public.id}"
+    subnet_id = yandex_vpc_subnet.public.id
     nat       = true
   }
+
+    metadata = {
+      ssh-keys = "ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}"
+    }
 
 }
 
@@ -66,9 +76,13 @@ resource "yandex_compute_instance" "kuber2" {
   }
 
   network_interface {
-    subnet_id = "${yandex_vpc_subnet.public2.id}"
+    subnet_id = yandex_vpc_subnet.public2.id
     nat       = true
   }
+
+    metadata = {
+      ssh-keys = "ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}"
+    }
 
 }
 
@@ -81,15 +95,15 @@ resource "yandex_vpc_subnet" "public" {
   name = "public"
   v4_cidr_blocks = ["192.168.10.0/24"]
   zone           = "${var.zone}"
-  network_id     = "${yandex_vpc_network.network.id}"
+  network_id     = yandex_vpc_network.network.id
   folder_id      = "${var.folder_id}"
 }
 
 resource "yandex_vpc_subnet" "public2" {
   name = "public2"
-  v4_cidr_blocks = ["192.168.10.0/24"]
+  v4_cidr_blocks = ["10.2.0.0/16"]
   zone           = "${var.zone2}"
-  network_id     = "${yandex_vpc_network.network.id}"
+  network_id     = yandex_vpc_network.network.id
   folder_id      = "${var.folder_id}"
 }
 
