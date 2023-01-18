@@ -1,10 +1,10 @@
 variable cloud_id {
   type = string
-  default = "b1gahq1fv8coc16nj8bj"
+  default = "b1gvlmkrl8qmivg3khrs"
 }
 variable folder_id {
   type = string
-  default = "b1gjmrhngcisglrqmhda"
+  default = "b1gvgstf6rli0a4pqbp9"
 }
 variable zone {
   type = string
