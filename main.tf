@@ -9,20 +9,19 @@ terraform {
 
 #Provider settngs
 provider "yandex" {
-  token     = "AQAAAAABrO5ZAATuwY0lJeVdDkwdpeWXGho9Yx8"
-  cloud_id  = "b1gahq1fv8coc16nj8bj"
-  folder_id = "b1gjmrhngcisglrqmhda"
+  cloud_id  = "${var.cloud_id}"
+  folder_id = "${var.folder_id}"
   zone = "ru-central1-a"
 }
 
-
 resource "yandex_iam_service_account" "sa" {
-  name = "storageman"
+  name = "k8s"
+  folder_id      = "${var.folder_id}"
 }
 
 // Назначение роли сервисному аккаунту
-resource "yandex_resourcemanager_folder_iam_member" "sa-editor" {
-  folder_id = "b1gjmrhngcisglrqmhda"
+resource "yandex_resourcemanager_folder_iam_member" "creator" {
+  folder_id = "${var.folder_id}"
   role      = "admin"
   member    = "serviceAccount:${yandex_iam_service_account.sa.id}"
 }
@@ -33,75 +32,81 @@ resource "yandex_iam_service_account_static_access_key" "sa-static-key" {
   description        = "static access key for object storage"
 }
 
-#Группа хостов
-resource "yandex_compute_instance_group" "group1" {
-  name                = "group1"
-  folder_id = "b1gjmrhngcisglrqmhda"
-  service_account_id  = "${yandex_iam_service_account.sa.id}"
-  deletion_protection = false
-  instance_template {
-    resources {
-      memory = 2
-      cores  = 2
-      core_fraction = 20
+resource "yandex_compute_instance" "kuber" {
+  count = 2
+  name           = "kuber-zone1-${count.index + 1}"
+
+  resources {
+    cores  = 2
+    memory = 2
+    core_fraction = 20
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd827b91d99psvq5fjit"
     }
-    boot_disk {
-      initialize_params {
-        image_id = "fd827b91d99psvq5fjit"
-      }
-    }
-    network_interface {
-      subnet_ids = ["${yandex_vpc_subnet.public.id}"]
-      nat = true
-    }
-    labels = {
-      label1 = "label1-value"
-      label2 = "label2-value"
-      label3 = "label3-value"
-    }
+  }
+
+  network_interface {
+    subnet_id = yandex_vpc_subnet.public.id
+    nat       = true
+  }
+
     metadata = {
       user-data = "${file("data.txt")}"
       #ssh-keys = "ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}"
     }
-    network_settings {
-      type = "STANDARD"
-    }
-  }
 
-  variables = {
-    test_key1 = "test_value1"
-    test_key2 = "test_value2"
-  }
-
-  scale_policy {
-    fixed_scale {
-      size = 3
-    }
-  }
-
-  allocation_policy {
-    zones = ["ru-central1-a"]
-  }
-
-  deploy_policy {
-    max_unavailable = 3
-    max_creating    = 3
-    max_expansion   = 3
-    max_deleting    = 3
-  }
 }
 
+resource "yandex_compute_instance" "kuber2" {
+  count = 1
+  name           = "kuber-zone2-${count.index + 1}"
 
+  resources {
+    cores  = 2
+    memory = 2
+    core_fraction = 20
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd827b91d99psvq5fjit"
+    }
+  }
+
+  network_interface {
+    subnet_id = yandex_vpc_subnet.public2.id
+    nat       = true
+  }
+
+    metadata = {
+      user-data = "${file("data.txt")}"
+      #ssh-keys = "ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}"
+    }
+
+}
 
 resource "yandex_vpc_network" "network" {
   name = "network"
+  folder_id      = "${var.folder_id}"
 }
 
 resource "yandex_vpc_subnet" "public" {
   name = "public"
   v4_cidr_blocks = ["192.168.10.0/24"]
-  zone           = "ru-central1-a"
-  network_id     = "${yandex_vpc_network.network.id}"
+  zone           = "${var.zone}"
+  network_id     = yandex_vpc_network.network.id
+  folder_id      = "${var.folder_id}"
+}
+
+resource "yandex_vpc_subnet" "public2" {
+  name = "public2"
+  v4_cidr_blocks = ["10.2.0.0/16"]
+  zone           = "${var.zone2}"
+  network_id     = yandex_vpc_network.network.id
+  folder_id      = "${var.folder_id}"
 }
 
 
