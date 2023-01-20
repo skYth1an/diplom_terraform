@@ -45,7 +45,7 @@ resource "yandex_compute_instance" "kuber" {
 
   boot_disk {
     initialize_params {
-      image_id = "fd8ueg1g3ifoelgdaqhb"
+      image_id = "fd80l3igojs610mh1ndg"
       size = 20
     }
   }
@@ -75,7 +75,7 @@ resource "yandex_compute_instance" "kuber2" {
 
   boot_disk {
     initialize_params {
-      image_id = "fd8ueg1g3ifoelgdaqhb"
+      image_id = "fd80l3igojs610mh1ndg"
       size = 20
     }
   }
