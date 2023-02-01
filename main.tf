@@ -22,7 +22,7 @@ resource "yandex_iam_service_account" "sa" {
 // Назначение роли сервисному аккаунту
 resource "yandex_resourcemanager_folder_iam_member" "creator" {
   folder_id = "${var.folder_id}"
-  role      = "admin"
+  role      = "editor"
   member    = "serviceAccount:${yandex_iam_service_account.sa.id}"
 }
 
@@ -91,6 +91,38 @@ resource "yandex_compute_instance" "kuber2" {
     }
 
 }
+
+resource "yandex_compute_instance" "jenkins" {
+  count = 1
+  name           = "jenkins-${count.index + 1}"
+  zone = "ru-central1-b"
+
+  resources {
+    cores  = 2
+    memory = 4
+    core_fraction = 20
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd8tlgqcj6imfdei546a"
+      size = 20
+    }
+  }
+
+  network_interface {
+    subnet_id = yandex_vpc_subnet.public2.id
+    nat       = true
+  }
+
+    metadata = {
+      user-data = "${file("data.txt")}"
+      #ssh-keys = "ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}"
+    }
+
+}
+
+
 
 resource "yandex_vpc_network" "network" {
   name = "network"
